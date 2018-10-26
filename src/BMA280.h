@@ -1,16 +1,16 @@
 /* 06/16/2017 Copyright Tlera Corporation
- *  
+ *
  *  Created by Kris Winer
- *  
- *  The BMA280 is an inexpensive (~$1), three-axis, high-resolution (14-bit) acclerometer in a tiny 2 mm x 2 mm LGA12 package with 32-slot FIFO, 
- *  two multifunction interrupts and widely configurable sample rate (15 - 2000 Hz), full range (2 - 16 g), low power modes, 
+ *
+ *  The BMA280 is an inexpensive (~$1), three-axis, high-resolution (14-bit) acclerometer in a tiny 2 mm x 2 mm LGA12 package with 32-slot FIFO,
+ *  two multifunction interrupts and widely configurable sample rate (15 - 2000 Hz), full range (2 - 16 g), low power modes,
  *  and interrupt detection behaviors. This accelerometer is nice choice for low-frequency sound and vibration analysis,
  *  tap detection and simple orientation estimation.
- *  
+ *
  *  Library may be used freely and without limit with attribution.
- *  
+ *
  */
- 
+
 #ifndef BMA280_h
 #define BMA280_h
 
@@ -76,6 +76,15 @@
 #define BMA280_FIFO_CONFIG_1   0x3E
 #define BMA280_FIFO_DATA       0x3F
 
+#define BMA280_INT0_STAP       0x20
+#define BMA280_INT0_DTAP       0x10
+#define BMA280_INT0_LOWG       0x01
+
+#define BMA280_INT2_TAP_NEG    0x80
+#define BMA280_INT2_TAP_Z      0x40
+#define BMA280_INT2_TAP_Y      0x20
+#define BMA280_INT2_TAP_X      0x10
+
 #define BMA280_ADDRESS  0x18  // if ADO is 0 (default)
 
 #define AFS_2G  0x02
@@ -111,19 +120,21 @@
 
 class BMA280
 {
-  public: 
+  public:
   BMA280(uint8_t intPin1, uint8_t intPin2);
   float getAres(uint8_t Ascale);
   uint8_t getChipID();
   uint8_t getTapType();
   uint8_t getTapStatus();
   void initBMA280(uint8_t Ascale, uint8_t BW, uint8_t power_Mode, uint8_t sleep_dur);
+  void initFreeFall(uint8_t delay, uint8_t threshold, uint8_t hysteresis);
+  void initDoubleTap(uint8_t type, uint8_t duration, uint8_t samples, uint8_t threshold);
+  void configInt(uint8_t type);
   void fastCompensationBMA280();
   void resetBMA280();
   void selfTestBMA280();
   void readBMA280AccelData(int16_t * destination);
   int16_t readBMA280GyroTempData();
-  void I2Cscan();
   void writeByte(uint8_t address, uint8_t subAddress, uint8_t data);
   uint8_t readByte(uint8_t address, uint8_t subAddress);
   void readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest);
